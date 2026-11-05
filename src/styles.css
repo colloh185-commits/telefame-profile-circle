@@ -169,6 +169,10 @@
   box-shadow: var(--shadow-brand);
 }
 
+@utility shadow-nav {
+  box-shadow: 0 -8px 24px -18px color-mix(in oklab, var(--foreground) 40%, transparent);
+}
+
 @utility shadow-soft {
   box-shadow: var(--shadow-soft);
 }

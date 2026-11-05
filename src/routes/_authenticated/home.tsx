@@ -89,7 +89,7 @@ function MobileHome({ avatarUrl, name }: { avatarUrl: string | null | undefined;
 
       <nav
         aria-label="Main"
-        className="shrink-0 border-t bg-background pb-safe shadow-[0_-8px_24px_-18px_color-mix(in_oklab,var(--foreground)_40%,transparent)]"
+        className="shrink-0 border-t bg-background pb-safe shadow-nav"
       >
         <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-2">
           <BottomTab item={NAV[0]!} active />
