@@ -68,7 +68,8 @@ export const saveProfile = createServerFn({ method: "POST" })
         .from("avatars")
         .upload(newPath, clean.bytes, {
           contentType: CONTENT_TYPES.jpg,
-          cacheControl: "3600",
+          // Names are random and never reused, so browsers may keep the file for a year.
+          cacheControl: "31536000",
           upsert: false,
         });
       if (upErr) {
