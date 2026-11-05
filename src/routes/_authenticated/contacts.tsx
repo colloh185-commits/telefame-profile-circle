@@ -111,15 +111,25 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
   const [text, setText] = useState(value);
   const changeRef = useRef(onChange);
   changeRef.current = onChange;
+  const sent = useRef(value);
 
-  useEffect(() => setText(value), [value]);
+  // Only adopt outside changes (back button, links), never our own debounced echo.
+  useEffect(() => {
+    if (value !== sent.current) {
+      sent.current = value;
+      setText(value);
+    }
+  }, [value]);
 
   useEffect(() => {
     const next = cleanSearch(text);
-    if (next === value) return;
-    const t = setTimeout(() => changeRef.current(next), 300);
+    if (next === sent.current) return;
+    const t = setTimeout(() => {
+      sent.current = next;
+      changeRef.current(next);
+    }, 300);
     return () => clearTimeout(t);
-  }, [text, value]);
+  }, [text]);
 
   return (
     <label className="flex h-9 w-full items-center gap-2.5 rounded-full bg-background px-3.5 text-muted-foreground shadow-soft focus-within:ring-2 focus-within:ring-primary-foreground/60 md:h-10 md:max-w-xl">
@@ -140,6 +150,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
           type="button"
           onClick={() => {
             setText("");
+            sent.current = "";
             changeRef.current("");
           }}
           aria-label="Clear search"
