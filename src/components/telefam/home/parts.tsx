@@ -9,7 +9,7 @@ export function SearchPill({ className }: { className?: string }) {
       type="button"
       onClick={() => comingSoon("Search")}
       className={cn(
-        "flex h-11 min-w-0 flex-1 items-center gap-3 rounded-full bg-background px-4 text-left text-muted-foreground shadow-soft transition-colors hover:bg-card",
+        "flex h-11 w-full min-w-0 flex-1 items-center gap-3 rounded-full bg-background px-4 text-left text-muted-foreground shadow-soft transition-colors hover:bg-card",
         className,
       )}
     >
