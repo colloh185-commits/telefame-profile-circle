@@ -14,8 +14,9 @@ export type MyProfile = {
 };
 
 export async function fetchMyProfile(): Promise<MyProfile | null> {
-  const { data: userData } = await supabase.auth.getUser();
-  const user = userData.user;
+  // Session saved on the device (works offline); the database still checks it.
+  const { data: sessionData } = await supabase.auth.getSession();
+  const user = sessionData.session?.user;
   if (!user) return null;
 
   const { data, error } = await supabase

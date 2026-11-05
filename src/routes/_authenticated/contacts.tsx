@@ -71,7 +71,7 @@ function ContactsPageView() {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="shrink-0 bg-brand-gradient pt-safe md:pt-0">
-            <div className="mx-auto w-full max-w-5xl px-3 pb-5 pt-1.5 md:px-6 md:pb-6 md:pt-5">
+            <div className="mx-auto w-full max-w-6xl px-3 pb-5 pt-1.5 md:px-6 md:pb-6 md:pt-5">
               <div className="mb-2.5 flex items-center justify-between gap-2 text-primary-foreground md:mb-3.5">
                 <div className="min-w-0 pl-1">
                   <h1 className="truncate text-lg font-extrabold tracking-tight md:text-2xl">Contacts</h1>
@@ -111,15 +111,25 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
   const [text, setText] = useState(value);
   const changeRef = useRef(onChange);
   changeRef.current = onChange;
+  const sent = useRef(value);
 
-  useEffect(() => setText(value), [value]);
+  // Only adopt outside changes (back button, links), never our own debounced echo.
+  useEffect(() => {
+    if (value !== sent.current) {
+      sent.current = value;
+      setText(value);
+    }
+  }, [value]);
 
   useEffect(() => {
     const next = cleanSearch(text);
-    if (next === value) return;
-    const t = setTimeout(() => changeRef.current(next), 300);
+    if (next === sent.current) return;
+    const t = setTimeout(() => {
+      sent.current = next;
+      changeRef.current(next);
+    }, 300);
     return () => clearTimeout(t);
-  }, [text, value]);
+  }, [text]);
 
   return (
     <label className="flex h-9 w-full items-center gap-2.5 rounded-full bg-background px-3.5 text-muted-foreground shadow-soft focus-within:ring-2 focus-within:ring-primary-foreground/60 md:h-10 md:max-w-xl">
@@ -140,6 +150,7 @@ function SearchBox({ value, onChange }: { value: string; onChange: (v: string) =
           type="button"
           onClick={() => {
             setText("");
+            sent.current = "";
             changeRef.current("");
           }}
           aria-label="Clear search"
@@ -253,7 +264,7 @@ function ContactsList({ tab, q }: { tab: ContactTab; q: string }) {
         </div>
       )}
 
-      <div className="mx-auto w-full max-w-5xl pb-4 pt-2 md:px-6 md:pt-6">
+      <div className="mx-auto w-full max-w-6xl pb-4 pt-2 md:px-6 md:pt-6">
         {list ? (
           list.length === 0 ? (
             <EmptyContacts tab={tab} search={q} />
@@ -262,7 +273,7 @@ function ContactsList({ tab, q }: { tab: ContactTab; q: string }) {
               <h2 className="px-4 pb-1 pt-2 text-[0.6875rem] font-bold uppercase tracking-wider text-muted-foreground md:px-1 md:pb-3 md:pt-0">
                 {q ? `Results for "${q}"` : TAB_LABELS[tab]}
               </h2>
-              <ul className="md:grid md:grid-cols-2 md:gap-3 xl:grid-cols-3">
+              <ul className="md:grid md:grid-cols-2 md:gap-3 2xl:grid-cols-3">
                 {list.map((c) => (
                   <ContactRow key={c.id} contact={c} />
                 ))}
@@ -289,7 +300,7 @@ function ContactsList({ tab, q }: { tab: ContactTab; q: string }) {
         ) : error ? (
           <LoadFailed onRetry={() => void refetch()} />
         ) : (
-          <ul aria-busy="true" aria-label="Loading contacts" className="md:grid md:grid-cols-2 md:gap-3 xl:grid-cols-3">
+          <ul aria-busy="true" aria-label="Loading contacts" className="md:grid md:grid-cols-2 md:gap-3 2xl:grid-cols-3">
             {Array.from({ length: 8 }, (_, i) => (
               <ContactSkeleton key={i} />
             ))}

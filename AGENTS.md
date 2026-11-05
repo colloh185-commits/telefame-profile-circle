@@ -16,4 +16,8 @@
 - Avatars bucket is private; the browser signs URLs for the owner's own files (workspace blocks public buckets).
 - Sign-in cooldown is device-side (`src/lib/auth-throttle.ts`) on top of the auth service's built-in rate limits; there is no server rate-limit primitive.
 - Theme (light/dark/system) lives in `src/lib/theme.ts`; an inline head script applies the `.dark` class before paint to avoid a flash.
-- Home renders separate mobile (`md:hidden`) and desktop (rail + list + conversation grid) layouts in one route; unfinished actions call `comingSoon()` from `src/lib/coming-soon.ts`.
+- Home renders separate mobile (`md:hidden`) and desktop layouts in one route; Contacts uses one responsive tree. Unfinished actions call `comingSoon()` from `src/lib/coming-soon.ts`.
+- Contacts read through the security-definer `list_contacts` / `contact_counts` RPCs (profiles stay owner-only under RLS); follows are written directly to `follows` with self-only insert/delete policies.
+- Signed-in users can view only *current* avatars (`is_current_avatar` storage policy); avatar blobs are cached in IndexedDB keyed by their immutable storage path (`src/lib/image-cache.ts`).
+- Offline: the query cache is persisted to IndexedDB (`src/lib/query-persist.ts`, allow-listed keys only); backend errors are mapped to `AppError` (`src/lib/offline.ts`) so the UI shows "No internet" or a generic message, never raw server text; the `_authenticated` gate falls back to the saved session when the auth service is unreachable.
+- App nav (mobile bottom bar + desktop rail) is shared in `src/components/telefam/shell/AppNav.tsx`.
