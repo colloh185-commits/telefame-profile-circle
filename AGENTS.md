@@ -14,3 +14,5 @@
 - Shared validation lives in `src/lib/validation.ts` and is used by both client forms and server fns, so rules can't drift.
 - Avatars bucket is private; the browser signs URLs for the owner's own files (workspace blocks public buckets).
 - Sign-in cooldown is device-side (`src/lib/auth-throttle.ts`) on top of the auth service's built-in rate limits; there is no server rate-limit primitive.
+- Theme (light/dark/system) lives in `src/lib/theme.ts`; an inline head script applies the `.dark` class before paint to avoid a flash.
+- Home renders separate mobile (`md:hidden`) and desktop (rail + list + conversation grid) layouts in one route; unfinished actions call `comingSoon()` from `src/lib/coming-soon.ts`.
