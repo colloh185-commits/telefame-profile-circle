@@ -145,6 +145,14 @@
   }
 }
 
+@utility pt-safe {
+  padding-top: max(env(safe-area-inset-top), 0.75rem);
+}
+
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+
 @utility bg-brand-gradient {
   background-image: var(--gradient-brand);
 }
