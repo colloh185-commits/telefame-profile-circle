@@ -8,3 +8,9 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Architecture rules
+- Profile writes (incl. avatar upload) go only through `saveProfile` server fn in `src/lib/profile.functions.ts`; storage has no user insert policy, so uploads can't bypass validation/renaming.
+- Shared validation lives in `src/lib/validation.ts` and is used by both client forms and server fns, so rules can't drift.
+- Avatars bucket is private; the browser signs URLs for the owner's own files (workspace blocks public buckets).
+- Sign-in cooldown is device-side (`src/lib/auth-throttle.ts`) on top of the auth service's built-in rate limits; there is no server rate-limit primitive.

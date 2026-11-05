@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1793863231042,
+      "tag": "0000_create_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793863262127,
+      "tag": "0001_avatars_storage_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793863332061,
+      "tag": "0002_avatar_path_extensions",
+      "breakpoints": true
+    }
+  ]
+}
