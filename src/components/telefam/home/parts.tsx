@@ -9,12 +9,12 @@ export function SearchPill({ className }: { className?: string }) {
       type="button"
       onClick={() => comingSoon("Search")}
       className={cn(
-        "flex h-11 w-full min-w-0 flex-1 items-center gap-3 rounded-full bg-background px-4 text-left text-muted-foreground shadow-soft transition-colors hover:bg-card",
+        "flex h-9 w-full min-w-0 flex-1 items-center gap-2.5 rounded-full bg-background px-3.5 text-left text-muted-foreground shadow-soft transition-colors hover:bg-card",
         className,
       )}
     >
-      <Search className="size-5 shrink-0" />
-      <span className="truncate text-[0.95rem]">Search chats, people, groups</span>
+      <Search className="size-4 shrink-0" />
+      <span className="truncate text-sm">Search chats, people, groups</span>
     </button>
   );
 }
@@ -26,23 +26,23 @@ export function EmptyConversation({ size = "md" }: { size?: "md" | "lg" }) {
       <div
         className={cn(
           "flex items-center justify-center rounded-full bg-primary-soft text-primary",
-          lg ? "size-32" : "size-24",
+          lg ? "size-24" : "size-[4.5rem]",
         )}
       >
-        <MessagesSquare className={lg ? "size-14" : "size-11"} strokeWidth={1.8} />
+        <MessagesSquare className={lg ? "size-11" : "size-8"} strokeWidth={1.8} />
       </div>
-      <h2 className={cn("mt-6 font-extrabold tracking-tight", lg ? "text-3xl" : "text-2xl")}>
+      <h2 className={cn("mt-5 font-extrabold tracking-tight", lg ? "text-2xl" : "text-lg")}>
         Start a conversation
       </h2>
-      <p className={cn("mt-2 max-w-xs text-muted-foreground", lg && "max-w-sm text-lg")}>
+      <p className={cn("mt-1.5 max-w-[16rem] text-sm text-muted-foreground", lg && "max-w-xs text-base")}>
         Tap the button below to chat with your friends, family or groups
       </p>
       <Button
         variant="brand"
         onClick={() => comingSoon("Start chat")}
-        className={cn("mt-6 h-12 px-7 text-base", lg && "h-14 px-9 text-lg")}
+        className={cn("mt-5 h-10 px-5 text-sm", lg && "h-11 px-7 text-base")}
       >
-        <MessageSquarePlus className="!size-5" /> Start chat
+        <MessageSquarePlus className="!size-4" /> Start chat
       </Button>
     </div>
   );

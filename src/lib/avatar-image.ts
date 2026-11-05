@@ -1,8 +1,11 @@
 const MAX_INPUT_BYTES = 15 * 1024 * 1024;
 const OUTPUT_SIZE = 512;
+/** Target size for the compressed upload. */
+export const TARGET_UPLOAD_BYTES = 120 * 1024;
+const QUALITY_STEPS = [0.82, 0.74, 0.66, 0.58, 0.5];
 
-function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality: number) {
-  return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality));
+function canvasToBlob(canvas: HTMLCanvasElement, quality: number) {
+  return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
 }
 
 function blobToBase64(blob: Blob) {
@@ -15,7 +18,8 @@ function blobToBase64(blob: Blob) {
 }
 
 /**
- * Decodes the chosen file, center-crops it to a 512px square and re-encodes it.
+ * Decodes the chosen file, center-crops it to a 512px square and compresses it
+ * to a JPEG (stepping quality down until it fits the target size).
  * Re-encoding drops EXIF/GPS metadata and anything that isn't pixel data.
  */
 export async function prepareAvatar(file: File) {
@@ -39,16 +43,23 @@ export async function prepareAvatar(file: File) {
   canvas.height = OUTPUT_SIZE;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Could not process the photo");
+  // JPEG has no transparency: paint a white base so transparent PNGs look right.
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(bitmap, sx, sy, side, side, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
   bitmap.close();
 
-  let blob = await canvasToBlob(canvas, "image/webp", 0.86);
-  if (!blob || blob.type !== "image/webp") blob = await canvasToBlob(canvas, "image/jpeg", 0.88);
+  let blob: Blob | null = null;
+  for (const q of QUALITY_STEPS) {
+    blob = await canvasToBlob(canvas, q);
+    if (blob && blob.size <= TARGET_UPLOAD_BYTES) break;
+  }
   if (!blob) throw new Error("Could not process the photo");
 
   return {
     base64: await blobToBase64(blob),
     previewUrl: URL.createObjectURL(blob),
+    bytes: blob.size,
   };
 }

@@ -53,6 +53,45 @@ export type Database = {
         }
         Relationships: []
       }
+      upload_fingerprints: {
+        Row: {
+          byte_size: number
+          created_at: string
+          height: number
+          id: string
+          phash: string
+          purpose: string
+          sha256: string
+          storage_path: string
+          user_id: string
+          width: number
+        }
+        Insert: {
+          byte_size: number
+          created_at?: string
+          height: number
+          id?: string
+          phash: string
+          purpose?: string
+          sha256: string
+          storage_path: string
+          user_id: string
+          width: number
+        }
+        Update: {
+          byte_size?: number
+          created_at?: string
+          height?: number
+          id?: string
+          phash?: string
+          purpose?: string
+          sha256?: string
+          storage_path?: string
+          user_id?: string
+          width?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
