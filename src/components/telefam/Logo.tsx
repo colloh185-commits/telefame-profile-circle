@@ -13,7 +13,7 @@ export function LogoMark({ className, animated = false }: { className?: string; 
       <g className={animated ? "animate-plane-float" : undefined}>
         {/* trail */}
         <path
-          d="M52 82 C 50 74, 52 70, 56 66"
+          d="M54 84 C 50 76, 52 72, 56 68"
           fill="none"
           stroke="currentColor"
           strokeOpacity="0.55"
@@ -22,12 +22,12 @@ export function LogoMark({ className, animated = false }: { className?: string; 
           strokeDasharray="2 4"
         />
         {/* plane — top wing */}
-        <path d="M30 50 L88 26 L56 60 Z" fill="currentColor" />
+        <path d="M24 52 L94 20 L56 62 Z" fill="currentColor" />
         {/* plane — lower body */}
-        <path d="M56 60 L88 26 L70 78 Z" fill="currentColor" fillOpacity="0.82" />
+        <path d="M56 62 L94 20 L72 82 Z" fill="currentColor" fillOpacity="0.82" />
         {/* plane — fold */}
-        <path d="M56 60 L62 72 L52 66 Z" fill="currentColor" fillOpacity="0.55" />
-        <path d="M56 60 L88 26 L60 64 Z" fill="currentColor" fillOpacity="0.35" />
+        <path d="M56 62 L63 75 L51 68 Z" fill="currentColor" fillOpacity="0.55" />
+        <path d="M56 62 L94 20 L61 67 Z" fill="currentColor" fillOpacity="0.35" />
       </g>
       {/* open book */}
       <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
