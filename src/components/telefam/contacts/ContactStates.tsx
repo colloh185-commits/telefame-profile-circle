@@ -90,13 +90,13 @@ export function EmptyContacts({ tab, search }: { tab: ContactTab; search: string
 
 export function ContactSkeleton() {
   return (
-    <div className="flex items-center gap-3 px-4 py-2.5 md:rounded-2xl md:border md:bg-card md:p-3.5">
+    <li className="flex items-center gap-3 px-4 py-2.5 md:rounded-2xl md:border md:bg-card md:p-3.5">
       <div className="size-11 shrink-0 animate-pulse rounded-full bg-muted" />
       <div className="flex-1 space-y-2">
         <div className="h-3 w-2/5 animate-pulse rounded-full bg-muted" />
         <div className="h-2.5 w-1/4 animate-pulse rounded-full bg-muted" />
       </div>
       <div className="h-8 w-[5.75rem] animate-pulse rounded-full bg-muted" />
-    </div>
+    </li>
   );
 }
