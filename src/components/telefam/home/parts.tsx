@@ -2,6 +2,8 @@ import { MessageSquarePlus, MessagesSquare, Search, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { comingSoon } from "@/lib/coming-soon";
 import { cn } from "@/lib/utils";
+import { useCachedImage } from "@/lib/image-cache";
+import { useEffect, useState } from "react";
 
 export function SearchPill({ className }: { className?: string }) {
   return (
@@ -48,19 +50,55 @@ export function EmptyConversation({ size = "md" }: { size?: "md" | "lg" }) {
   );
 }
 
+function initials(name: string | undefined) {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  return parts
+    .slice(0, 2)
+    .map((p) => p[0]!.toUpperCase())
+    .join("");
+}
+
+/**
+ * Profile photo. When `path` is given the image is cached on the device, so it
+ * still shows offline; otherwise falls back to initials / a person icon.
+ */
 export function Avatar({
   url,
+  path,
   name,
   className,
 }: {
   url: string | null | undefined;
+  path?: string | null;
   name?: string | undefined;
   className?: string;
 }) {
+  const cached = useCachedImage(path, url);
+  const [broken, setBroken] = useState(false);
+  const src = path ? cached : url;
+  const letters = initials(name);
+
+  useEffect(() => setBroken(false), [src]);
+
   return (
-    <span className={cn("flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted", className)}>
-      {url ? (
-        <img src={url} alt={name ?? "Profile"} className="size-full object-cover" />
+    <span
+      className={cn(
+        "flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted",
+        !src && letters && "bg-primary-soft text-primary",
+        className,
+      )}
+    >
+      {src && !broken ? (
+        <img
+          src={src}
+          alt={name ?? "Profile"}
+          loading="lazy"
+          decoding="async"
+          onError={() => setBroken(true)}
+          className="size-full object-cover"
+        />
+      ) : letters ? (
+        <span className="text-[0.8em] font-bold leading-none">{letters}</span>
       ) : (
         <User className="size-1/2 text-muted-foreground" />
       )}
