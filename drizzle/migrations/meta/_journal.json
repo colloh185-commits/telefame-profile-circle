@@ -29,6 +29,13 @@
       "when": 1793865065961,
       "tag": "0003_upload_fingerprints",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793865855927,
+      "tag": "0004_follows_and_contacts",
+      "breakpoints": true
     }
   ]
 }

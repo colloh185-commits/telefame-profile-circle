@@ -9,6 +9,7 @@ export type MyProfile = {
   location: string;
   bio: string;
   avatarUrl: string | null;
+  avatarPath: string | null;
   onboarded: boolean;
 };
 
@@ -39,6 +40,7 @@ export async function fetchMyProfile(): Promise<MyProfile | null> {
     location: data?.location ?? "",
     bio: data?.bio ?? "",
     avatarUrl,
+    avatarPath: data?.avatar_path ?? null,
     onboarded: data?.onboarded ?? false,
   };
 }
