@@ -44,7 +44,7 @@ function Home() {
 
 /* ---------------------------------- Mobile --------------------------------- */
 
-type Me = { avatarUrl: string | null | undefined; avatarPath?: string | null; name: string | undefined };
+type Me = { avatarUrl: string | null | undefined; avatarPath?: string | null | undefined; name: string | undefined };
 
 function MobileHome({ me }: { me: Me }) {
   return (

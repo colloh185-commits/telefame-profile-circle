@@ -272,7 +272,7 @@ function ContactsList({ tab, q }: { tab: ContactTab; q: string }) {
                 {!isFetchingNextPage && hasNextPage && !online && (
                   <span className="text-xs text-muted-foreground">Connect to the internet to see more</span>
                 )}
-                {!isFetchingNextPage && hasNextPage && online && error && (
+                {!isFetchingNextPage && hasNextPage && online && !!error && (
                   <button
                     type="button"
                     onClick={() => void fetchNextPage()}

@@ -69,7 +69,7 @@ export function Avatar({
   className,
 }: {
   url: string | null | undefined;
-  path?: string | null;
+  path?: string | null | undefined;
   name?: string | undefined;
   className?: string;
 }) {
