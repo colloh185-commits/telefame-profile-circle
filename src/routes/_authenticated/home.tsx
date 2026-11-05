@@ -67,22 +67,22 @@ function MobileHome({ avatarUrl, name }: { avatarUrl: string | null | undefined;
   return (
     <div className="flex h-dvh flex-col bg-background md:hidden">
       <header className="shrink-0 bg-brand-gradient pt-safe">
-        <div className="flex items-center gap-2 px-4 pb-8 pt-3">
+        <div className="flex items-center gap-1.5 px-3 pb-6 pt-1.5">
           <SearchPill />
           <HomeMenu>
             <button
               type="button"
               aria-label="More options"
-              className="flex size-10 shrink-0 items-center justify-center rounded-full text-primary-foreground transition-colors hover:bg-primary-foreground/15"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full text-primary-foreground transition-colors hover:bg-primary-foreground/15"
             >
-              <EllipsisVertical className="size-6" />
+              <EllipsisVertical className="size-5" />
             </button>
           </HomeMenu>
         </div>
       </header>
 
-      <main className="relative -mt-5 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-t-[1.75rem] bg-background">
-        <div className="m-auto py-10">
+      <main className="relative -mt-4 flex min-h-0 flex-1 flex-col overflow-y-auto rounded-t-3xl bg-background">
+        <div className="m-auto py-8">
           <EmptyConversation />
         </div>
       </main>
@@ -91,7 +91,7 @@ function MobileHome({ avatarUrl, name }: { avatarUrl: string | null | undefined;
         aria-label="Main"
         className="shrink-0 border-t bg-background pb-safe shadow-nav"
       >
-        <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-2">
+        <div className="mx-auto grid max-w-md grid-cols-5 items-end px-1 pt-1">
           <BottomTab item={NAV[0]!} active />
           <BottomTab item={NAV[1]!} />
           <div className="flex flex-col items-center">
@@ -99,20 +99,20 @@ function MobileHome({ avatarUrl, name }: { avatarUrl: string | null | undefined;
               type="button"
               onClick={() => comingSoon("Post")}
               aria-label="Post"
-              className="-mt-7 flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-brand ring-4 ring-background transition-transform active:scale-95"
+              className="-mt-5 flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-brand ring-4 ring-background transition-transform active:scale-95"
             >
-              <Plus className="size-7" strokeWidth={2.5} />
+              <Plus className="size-5" strokeWidth={2.5} />
             </button>
-            <span className="mt-1 pb-1 text-xs font-semibold text-muted-foreground">Post</span>
+            <span className="mt-0.5 pb-1 text-[0.6875rem] font-semibold text-muted-foreground">Post</span>
           </div>
           <BottomTab item={NAV[2]!} />
           <button
             type="button"
             onClick={() => comingSoon("Profile")}
-            className="flex flex-col items-center gap-1 pb-1 pt-1"
+            className="flex flex-col items-center gap-0.5 pb-1 pt-1"
           >
-            <Avatar url={avatarUrl} name={name} className="size-7 ring-2 ring-border" />
-            <span className="text-xs font-semibold text-muted-foreground">Profile</span>
+            <Avatar url={avatarUrl} name={name} className="size-[22px] ring-2 ring-border" />
+            <span className="text-[0.6875rem] font-semibold text-muted-foreground">Profile</span>
           </button>
         </div>
       </nav>
@@ -128,12 +128,12 @@ function BottomTab({ item, active = false }: { item: NavItem; active?: boolean }
       onClick={() => (active ? undefined : comingSoon(item.label))}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex flex-col items-center gap-1 pb-1 pt-1 transition-colors",
+        "flex flex-col items-center gap-0.5 pb-1 pt-1 transition-colors",
         active ? "text-primary" : "text-muted-foreground hover:text-foreground",
       )}
     >
-      <Icon className={cn("size-7", active && "fill-current")} />
-      <span className="text-xs font-semibold">{item.label}</span>
+      <Icon className={cn("size-[22px]", active && "fill-current")} />
+      <span className="text-[0.6875rem] font-semibold">{item.label}</span>
     </button>
   );
 }
@@ -153,10 +153,10 @@ function DesktopHome({
 
   return (
     <div className="hidden h-dvh bg-muted md:block">
-      <div className="mx-auto grid h-full max-w-[1680px] grid-cols-[76px_320px_minmax(0,1fr)] overflow-hidden bg-background shadow-soft lg:grid-cols-[84px_380px_minmax(0,1fr)] 2xl:border-x">
+      <div className="mx-auto grid h-full max-w-[1680px] grid-cols-[68px_300px_minmax(0,1fr)] overflow-hidden bg-background shadow-soft lg:grid-cols-[72px_340px_minmax(0,1fr)] 2xl:border-x">
         {/* Rail */}
-        <aside className="flex flex-col items-center gap-2 bg-brand-gradient py-5 text-primary-foreground">
-          <LogoMark className="mb-4 size-12" />
+        <aside className="flex flex-col items-center gap-1.5 bg-brand-gradient py-4 text-primary-foreground">
+          <LogoMark className="mb-3 size-10" />
           {NAV.map((item, i) => (
             <RailButton key={item.key} item={item} active={i === 0} />
           ))}
@@ -164,22 +164,22 @@ function DesktopHome({
             type="button"
             onClick={() => comingSoon("Post")}
             aria-label="Post"
-            className="mt-2 flex size-12 items-center justify-center rounded-2xl bg-primary-foreground text-primary shadow-brand transition-transform hover:scale-105 active:scale-95"
+            className="mt-2 flex size-10 items-center justify-center rounded-xl bg-primary-foreground text-primary shadow-brand transition-transform hover:scale-105 active:scale-95"
           >
-            <Plus className="size-6" strokeWidth={2.5} />
+            <Plus className="size-5" strokeWidth={2.5} />
           </button>
           <div className="mt-auto flex flex-col items-center gap-3">
             <button
               type="button"
               onClick={toggle}
               aria-label={resolved === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              className="flex size-11 items-center justify-center rounded-2xl text-primary-foreground/85 transition-colors hover:bg-primary-foreground/15 hover:text-primary-foreground"
+              className="flex size-9 items-center justify-center rounded-xl text-primary-foreground/85 transition-colors hover:bg-primary-foreground/15 hover:text-primary-foreground"
             >
-              {resolved === "dark" ? <Sun className="size-5" /> : <Moon className="size-5" />}
+              {resolved === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
             </button>
             <HomeMenu align="start" side="right">
               <button type="button" aria-label="Account menu" className="rounded-full ring-2 ring-primary-foreground/70 transition hover:ring-primary-foreground">
-                <Avatar url={avatarUrl} name={name} className="size-11" />
+                <Avatar url={avatarUrl} name={name} className="size-9" />
               </button>
             </HomeMenu>
           </div>
@@ -187,28 +187,28 @@ function DesktopHome({
 
         {/* Chat list */}
         <section className="flex min-h-0 flex-col border-r bg-background">
-          <header className="shrink-0 bg-brand-gradient px-5 pb-6 pt-5">
-            <div className="mb-4 flex items-center justify-between gap-3 text-primary-foreground">
+          <header className="shrink-0 bg-brand-gradient px-4 pb-5 pt-4">
+            <div className="mb-3 flex items-center justify-between gap-3 text-primary-foreground">
               <div className="min-w-0">
-                <h1 className="truncate text-2xl font-extrabold tracking-tight">Chats</h1>
-                {username && <p className="truncate text-sm font-medium opacity-80">@{username}</p>}
+                <h1 className="truncate text-xl font-extrabold tracking-tight">Chats</h1>
+                {username && <p className="truncate text-xs font-medium opacity-80">@{username}</p>}
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <button
                   type="button"
                   onClick={() => comingSoon("New chat")}
                   aria-label="New chat"
-                  className="flex size-10 items-center justify-center rounded-full transition-colors hover:bg-primary-foreground/15"
+                  className="flex size-8 items-center justify-center rounded-full transition-colors hover:bg-primary-foreground/15"
                 >
-                  <MessageSquarePlus className="size-5" />
+                  <MessageSquarePlus className="size-4" />
                 </button>
                 <HomeMenu>
                   <button
                     type="button"
                     aria-label="More options"
-                    className="flex size-10 items-center justify-center rounded-full transition-colors hover:bg-primary-foreground/15"
+                    className="flex size-8 items-center justify-center rounded-full transition-colors hover:bg-primary-foreground/15"
                   >
-                    <EllipsisVertical className="size-5" />
+                    <EllipsisVertical className="size-4" />
                   </button>
                 </HomeMenu>
               </div>
@@ -217,14 +217,14 @@ function DesktopHome({
           </header>
 
           <div className="-mt-3 flex min-h-0 flex-1 flex-col rounded-t-3xl bg-background">
-            <div className="flex shrink-0 gap-2 overflow-x-auto px-5 pb-2 pt-5">
+            <div className="flex shrink-0 gap-1.5 overflow-x-auto px-4 pb-2 pt-4">
               {["All", "Unread", "Groups", "Book clubs"].map((f, i) => (
                 <button
                   key={f}
                   type="button"
                   onClick={() => (i === 0 ? undefined : comingSoon(`${f} filter`))}
                   className={cn(
-                    "shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors",
+                    "shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors",
                     i === 0
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground hover:text-foreground",
@@ -235,9 +235,9 @@ function DesktopHome({
               ))}
             </div>
             <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-              <MessageSquare className="size-10 text-muted-foreground/50" />
-              <p className="mt-3 font-bold">No chats yet</p>
-              <p className="mt-1 text-sm text-muted-foreground">Your conversations will appear here.</p>
+              <MessageSquare className="size-8 text-muted-foreground/50" />
+              <p className="mt-2.5 text-sm font-bold">No chats yet</p>
+              <p className="mt-1 text-xs text-muted-foreground">Your conversations will appear here.</p>
             </div>
           </div>
         </section>
@@ -253,7 +253,7 @@ function DesktopHome({
           </div>
           <div className="relative">
             <EmptyConversation size="lg" />
-            <p className="mt-10 text-center text-sm font-medium text-muted-foreground">
+            <p className="mt-8 text-center text-xs font-medium text-muted-foreground">
               Telefam · Read • Discover • Share
             </p>
           </div>
@@ -271,13 +271,13 @@ function RailButton({ item, active }: { item: NavItem; active: boolean }) {
       onClick={() => (active ? undefined : comingSoon(item.label))}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex w-16 flex-col items-center gap-1 rounded-2xl py-2.5 text-[0.7rem] font-semibold transition-colors",
+        "flex w-14 flex-col items-center gap-1 rounded-xl py-2 text-[0.625rem] font-semibold transition-colors",
         active
           ? "bg-primary-foreground/20 text-primary-foreground"
           : "text-primary-foreground/75 hover:bg-primary-foreground/10 hover:text-primary-foreground",
       )}
     >
-      <Icon className={cn("size-6", active && "fill-current")} />
+      <Icon className={cn("size-5", active && "fill-current")} />
       {item.label}
     </button>
   );
