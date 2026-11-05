@@ -298,7 +298,7 @@ function ProfileSetup() {
             </FieldShell>
 
             <FieldShell
-              icon={<Quote className="fill-current" />}
+              icon={<Quote className="rotate-180 fill-current" />}
               label="Bio"
               htmlFor="bio"
               error={errors.bio}
