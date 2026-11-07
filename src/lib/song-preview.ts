@@ -14,6 +14,8 @@ function el(): HTMLAudioElement {
       emit();
     });
     audio.addEventListener("pause", () => {
+      // Switching tracks fires a late pause; only clear if still paused.
+      if (!audio?.paused) return;
       playingId = null;
       emit();
     });
