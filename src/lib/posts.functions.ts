@@ -1,7 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Json } from "@/integrations/supabase/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database, Json } from "@/integrations/supabase/types";
 import { sanitizeText } from "./validation";
 import {
   MAX_PHOTO_STORED_BYTES,
@@ -56,10 +57,7 @@ async function lookupSong(id: number): Promise<Song | null> {
   }
 }
 
-async function requireOnboarded(
-  supabase: { from: (t: "profiles") => any },
-  userId: string,
-): Promise<boolean> {
+async function requireOnboarded(supabase: SupabaseClient<Database>, userId: string): Promise<boolean> {
   const { data } = await supabase.from("profiles").select("onboarded").eq("id", userId).maybeSingle();
   return !!data?.onboarded;
 }
