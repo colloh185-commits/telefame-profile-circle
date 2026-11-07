@@ -98,7 +98,7 @@ export function TrimBar({
           aria-valuenow={Math.round(start * 10) / 10}
           aria-valuetext={formatTime(start)}
           className={cn(handle, "rounded-l-xl")}
-          style={{ left: `calc(${pct(start)} - 0.5rem)` }}
+          style={{ left: pct(start) }}
           onPointerDown={down("start")}
           onKeyDown={keys("start")}
         >
@@ -113,7 +113,7 @@ export function TrimBar({
           aria-valuenow={Math.round(end * 10) / 10}
           aria-valuetext={formatTime(end)}
           className={cn(handle, "rounded-r-xl")}
-          style={{ left: `calc(${pct(end)} - 0.5rem)` }}
+          style={{ left: `calc(${pct(end)} - 1rem)` }}
           onPointerDown={down("end")}
           onKeyDown={keys("end")}
         >
