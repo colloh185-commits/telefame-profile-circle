@@ -23,3 +23,8 @@ export function blobToBase64(blob: Blob): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
+
+/** A media problem whose message is safe and helpful to show the user. */
+export class MediaError extends Error {
+  override name = "MediaError";
+}

@@ -16,6 +16,7 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedContactsRouteImport } from './routes/_authenticated/contacts'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedPostRouteImport } from './routes/_authenticated/post'
 import { Route as AuthenticatedProfileSetupRouteImport } from './routes/_authenticated/profile-setup'
 
 const IndexRoute = IndexRouteImport.update({
@@ -52,6 +53,11 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPostRoute = AuthenticatedPostRouteImport.update({
+  id: '/post',
+  path: '/post',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfileSetupRoute =
   AuthenticatedProfileSetupRouteImport.update({
     id: '/profile-setup',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/post': typeof AuthenticatedPostRoute
   '/profile-setup': typeof AuthenticatedProfileSetupRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/contacts': typeof AuthenticatedContactsRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/post': typeof AuthenticatedPostRoute
   '/profile-setup': typeof AuthenticatedProfileSetupRoute
 }
 export interface FileRoutesById {
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/contacts': typeof AuthenticatedContactsRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/post': typeof AuthenticatedPostRoute
   '/_authenticated/profile-setup': typeof AuthenticatedProfileSetupRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/contacts'
     | '/home'
+    | '/post'
     | '/profile-setup'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/contacts'
     | '/home'
+    | '/post'
     | '/profile-setup'
   id:
     | '__root__'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/_authenticated/contacts'
     | '/_authenticated/home'
+    | '/_authenticated/post'
     | '/_authenticated/profile-setup'
   fileRoutesById: FileRoutesById
 }
@@ -178,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/post': {
+      id: '/_authenticated/post'
+      path: '/post'
+      fullPath: '/post'
+      preLoaderRoute: typeof AuthenticatedPostRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile-setup': {
       id: '/_authenticated/profile-setup'
       path: '/profile-setup'
@@ -191,12 +210,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedContactsRoute: typeof AuthenticatedContactsRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedPostRoute: typeof AuthenticatedPostRoute
   AuthenticatedProfileSetupRoute: typeof AuthenticatedProfileSetupRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedContactsRoute: AuthenticatedContactsRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedPostRoute: AuthenticatedPostRoute,
   AuthenticatedProfileSetupRoute: AuthenticatedProfileSetupRoute,
 }
 
