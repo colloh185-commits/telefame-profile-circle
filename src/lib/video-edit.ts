@@ -15,7 +15,7 @@ import {
   type InputVideoTrack,
 } from "mediabunny";
 import { FRAME_FP_WIDTH, MAX_KEYFRAMES, MAX_VIDEO_INPUT_BYTES, videoOutputSize } from "./post-rules";
-import { blobToBase64, canvasToJpeg } from "./media-canvas";
+import { MediaError, blobToBase64, canvasToJpeg } from "./media-canvas";
 
 export type Crop = { left: number; top: number; width: number; height: number };
 
@@ -44,15 +44,15 @@ async function pickAudioCodec() {
 
 async function canvasOf(sink: CanvasSink, t: number) {
   const wrapped = await sink.getCanvas(t);
-  if (!wrapped) throw new Error("Could not read the video");
+  if (!wrapped) throw new MediaError("Could not read the video");
   return wrapped.canvas;
 }
 
 export async function openVideo(file: File): Promise<VideoHandle> {
-  if (!file.type.startsWith("video/")) throw new Error("Please choose a video file");
-  if (file.size > MAX_VIDEO_INPUT_BYTES) throw new Error("Video must be 100 MB or smaller");
+  if (!file.type.startsWith("video/")) throw new MediaError("Please choose a video file");
+  if (file.size > MAX_VIDEO_INPUT_BYTES) throw new MediaError("Video must be 100 MB or smaller");
   if (!videoEditingSupported()) {
-    throw new Error("This browser can't edit videos. Try Chrome or update Safari.");
+    throw new MediaError("This browser can't edit videos. Try Chrome or update Safari.");
   }
 
   const input = new Input({ source: new BlobSource(file), formats: ALL_FORMATS });
@@ -60,9 +60,9 @@ export async function openVideo(file: File): Promise<VideoHandle> {
   try {
     track = await input.getPrimaryVideoTrack();
   } catch {
-    throw new Error("This video format isn't supported");
+    throw new MediaError("This video format isn't supported");
   }
-  if (!track || !(await track.canDecode())) throw new Error("This video format isn't supported");
+  if (!track || !(await track.canDecode())) throw new MediaError("This video format isn't supported");
   const vt = track;
   const duration = await input.computeDuration();
   const width = await vt.getDisplayWidth();
@@ -121,7 +121,7 @@ export type CompressOptions = {
 export async function compressVideo(file: File, opts: CompressOptions): Promise<Blob> {
   const out = videoOutputSize(opts.crop.width, opts.crop.height);
   if (!(await canEncodeVideo("avc", { width: out.width, height: out.height }))) {
-    throw new Error("This browser can't compress videos. Try Chrome or update Safari.");
+    throw new MediaError("This browser can't compress videos. Try Chrome or update Safari.");
   }
   const audioCodec = opts.mute ? null : await pickAudioCodec();
   const input = new Input({ source: new BlobSource(file), formats: ALL_FORMATS });
@@ -150,7 +150,7 @@ export async function compressVideo(file: File, opts: CompressOptions): Promise<
       tags: {},
       showWarnings: false,
     });
-    if (!conversion.isValid) throw new Error("This video can't be processed");
+    if (!conversion.isValid) throw new MediaError("This video can't be processed");
     conversion.onProgress = (p) => opts.onProgress?.(p);
     const onAbort = () => void conversion.cancel();
     opts.signal?.addEventListener("abort", onAbort, { once: true });
@@ -160,7 +160,7 @@ export async function compressVideo(file: File, opts: CompressOptions): Promise<
       opts.signal?.removeEventListener("abort", onAbort);
     }
     const buffer = (output.target as BufferTarget).buffer;
-    if (!buffer) throw new Error("This video can't be processed");
+    if (!buffer) throw new MediaError("This video can't be processed");
     return new Blob([buffer], { type: "video/mp4" });
   } catch (err) {
     if (err instanceof ConversionCanceledError) throw new DOMException("Canceled", "AbortError");
@@ -177,20 +177,20 @@ export async function keyframeStills(blob: Blob): Promise<KeyframeStill[]> {
   const input = new Input({ source: new BlobSource(blob), formats: ALL_FORMATS });
   try {
     const track = await input.getPrimaryVideoTrack();
-    if (!track) throw new Error("This video can't be processed");
+    if (!track) throw new MediaError("This video can't be processed");
     const packets = new EncodedPacketSink(track);
     const times: number[] = [];
     let p = await packets.getFirstPacket({ metadataOnly: true });
     while (p) {
       if (p.type === "key") times.push(p.timestamp);
-      if (times.length > MAX_KEYFRAMES) throw new Error("This video is too long");
+      if (times.length > MAX_KEYFRAMES) throw new MediaError("This video is too long");
       p = await packets.getNextKeyPacket(p, { metadataOnly: true });
     }
     const sink = new CanvasSink(track, { width: FRAME_FP_WIDTH, poolSize: 0 });
     const out: KeyframeStill[] = [];
     let i = 0;
     for await (const wrapped of sink.canvasesAtTimestamps(times)) {
-      if (!wrapped) throw new Error("This video can't be processed");
+      if (!wrapped) throw new MediaError("This video can't be processed");
       out.push({ t: times[i]!, data: await blobToBase64(await canvasToJpeg(wrapped.canvas, 0.8)) });
       i++;
     }
