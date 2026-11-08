@@ -8,7 +8,7 @@ import { comingSoon } from "@/lib/coming-soon";
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-export type NavKey = "chats" | "contacts" | "feeds";
+export type NavKey = "chats" | "contacts" | "feeds" | "post";
 
 type NavItem = {
   key: NavKey;
@@ -34,14 +34,13 @@ export function MobileBottomNav({ active, me }: { active: NavKey; me: Me }) {
         <BottomTab item={NAV[0]!} active={active === "chats"} />
         <BottomTab item={NAV[1]!} active={active === "contacts"} />
         <div className="flex flex-col items-center">
-          <button
-            type="button"
-            onClick={() => comingSoon("Post")}
+          <Link
+            to="/post"
             aria-label="Post"
             className="-mt-5 flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-brand ring-4 ring-background transition-transform active:scale-95"
           >
             <Plus className="size-5" strokeWidth={2.5} />
-          </button>
+          </Link>
           <span className="mt-0.5 pb-1 text-[0.6875rem] font-semibold text-muted-foreground">Post</span>
         </div>
         <BottomTab item={NAV[2]!} active={active === "feeds"} />
@@ -94,14 +93,17 @@ export function DesktopRail({ active, me, className }: { active: NavKey; me: Me;
       {NAV.map((item) => (
         <RailButton key={item.key} item={item} active={item.key === active} />
       ))}
-      <button
-        type="button"
-        onClick={() => comingSoon("Post")}
+      <Link
+        to="/post"
         aria-label="Post"
-        className="mt-2 flex size-10 items-center justify-center rounded-xl bg-primary-foreground text-primary shadow-brand transition-transform hover:scale-105 active:scale-95"
+        aria-current={active === "post" ? "page" : undefined}
+        className={cn(
+          "mt-2 flex size-10 items-center justify-center rounded-xl bg-primary-foreground text-primary shadow-brand transition-transform hover:scale-105 active:scale-95",
+          active === "post" && "ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-primary",
+        )}
       >
         <Plus className="size-5" strokeWidth={2.5} />
-      </button>
+      </Link>
       <div className="mt-auto flex flex-col items-center gap-3">
         <button
           type="button"
