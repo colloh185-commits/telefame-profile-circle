@@ -111,8 +111,12 @@ function Editor({
   const { handle, start, end, mute, coverTime } = state;
   const { width: W, height: H, duration } = handle;
   const crop = videoCrop(state);
-  const src = useMemo(() => URL.createObjectURL(handle.file), [handle]);
-  useEffect(() => () => URL.revokeObjectURL(src), [src]);
+  const [src, setSrc] = useState<string>();
+  useEffect(() => {
+    const url = URL.createObjectURL(handle.file);
+    setSrc(url);
+    return () => URL.revokeObjectURL(url);
+  }, [handle]);
 
   const video = useRef<HTMLVideoElement>(null);
   const box = useRef<HTMLDivElement>(null);
