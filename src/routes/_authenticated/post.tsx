@@ -295,7 +295,7 @@ function PostPage() {
           </header>
 
           <main className="relative -mt-3 flex-1 overflow-y-auto rounded-t-3xl bg-background md:mt-0 md:rounded-none md:bg-muted/40">
-            <div className="mx-auto grid w-full max-w-6xl gap-4 pb-10 md:grid-cols-[minmax(0,1fr)_340px] md:gap-6 md:p-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+            <div className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 pb-10 md:grid-cols-[minmax(0,1fr)_340px] md:gap-6 md:p-6 lg:grid-cols-[minmax(0,1fr)_380px]">
               <section className={cn("md:rounded-3xl md:border md:bg-card md:p-6")}>
                 {mode === "text" && (
                   <TextComposer

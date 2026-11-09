@@ -87,7 +87,7 @@ export function TextComposer({
           ))}
         </div>
 
-        <div className="scrollbar-none -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1" role="radiogroup" aria-label="Font">
+        <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Font">
           {POST_FONTS.map((f) => (
             <button
               key={f}
