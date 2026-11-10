@@ -210,3 +210,22 @@ export function toSong(t: CatalogTrack): Song | null {
     durationMs: typeof t.trackTimeMillis === "number" ? t.trackTimeMillis : null,
   };
 }
+
+/* ------------------------------ Edit / delete ------------------------------ */
+
+export const updatePostSchema = z.object({
+  id: z.string().uuid(),
+  body: z.preprocess((v) => (typeof v === "string" ? sanitizeMultiline(v) : v), z.string().max(CAPTION_MAX)),
+  background: z.enum(POST_BACKGROUNDS).optional(),
+  font: z.enum(POST_FONTS).optional(),
+  ...common,
+}).superRefine((d, ctx) => {
+  if (mergeHashtags(d.hashtags, d.body).length > MAX_HASHTAGS) {
+    ctx.addIssue({ code: "custom", path: ["hashtags"], message: `Use up to ${MAX_HASHTAGS} hashtags` });
+  }
+  if (new Set(d.people).size !== d.people.length) {
+    ctx.addIssue({ code: "custom", path: ["people"], message: "Each person can be tagged once" });
+  }
+});
+
+export type UpdatePostInput = z.input<typeof updatePostSchema>;

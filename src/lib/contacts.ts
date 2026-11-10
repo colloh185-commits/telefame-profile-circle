@@ -150,7 +150,7 @@ async function myId(): Promise<string> {
   return id;
 }
 
-async function setFollow(userId: string, follow: boolean) {
+export async function setFollow(userId: string, follow: boolean) {
   try {
     const me = await myId();
     if (follow) {
