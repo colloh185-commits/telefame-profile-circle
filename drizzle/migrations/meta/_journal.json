@@ -43,6 +43,13 @@
       "when": 1793932005194,
       "tag": "0005_posts_and_media",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794280602476,
+      "tag": "0006_feed_reactions_and_safety",
+      "breakpoints": true
     }
   ]
 }
