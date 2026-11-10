@@ -9,12 +9,14 @@ import {
   PHOTO_SERVER_MAX_SIDE,
   POSTS_PER_HOUR,
   SONG_SEARCH_MAX,
+  TEXT_POST_MAX,
   UPLOAD_SLOTS_PER_HOUR,
   UPLOAD_SLOT_TTL_MS,
   mergeHashtags,
   prepareUploadsSchema,
   publishSchema,
   toSong,
+  updatePostSchema,
   type Song,
 } from "./post-rules";
 
@@ -401,4 +403,131 @@ export const publishPost = createServerFn({ method: "POST" })
     }
 
     return { ok: true as const, postId };
+  });
+
+/** Owner edits caption/text, tags, hashtags and song. Media stays as published. */
+export const updatePost = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => updatePostSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const fail = (error: string) => ({ ok: false as const, error });
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: post, error: postErr } = await supabaseAdmin
+      .from("posts")
+      .select("id, author_id, kind, song, text_style")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (postErr) {
+      console.error(postErr);
+      return fail(GENERIC);
+    }
+    if (!post || post.author_id !== userId) return fail("You can only edit your own posts.");
+
+    if (post.kind === "text" && (data.body.length < 1 || data.body.length > TEXT_POST_MAX)) {
+      return fail(data.body.length < 1 ? "Write something first" : `Keep it under ${TEXT_POST_MAX} characters`);
+    }
+
+    let song: Song | null = null;
+    const current = post.song as { id?: unknown } | null;
+    if (data.songId) {
+      song = current && current.id === data.songId ? (post.song as unknown as Song) : await lookupSong(data.songId);
+      if (!song) return fail("That song isn't available. Pick another one.");
+    }
+
+    const wanted = data.people.filter((id) => id !== userId);
+    let people: string[] = [];
+    if (wanted.length) {
+      const { data: rows, error } = await supabaseAdmin.from("profiles").select("id").in("id", wanted).eq("onboarded", true);
+      if (error) {
+        console.error(error);
+        return fail(GENERIC);
+      }
+      const valid = new Set((rows ?? []).map((r) => r.id));
+      people = wanted.filter((id) => valid.has(id));
+    }
+
+    const nextTags = mergeHashtags(data.hashtags, data.body);
+    const { data: oldRows } = await supabaseAdmin.from("post_hashtags").select("tag").eq("post_id", post.id);
+    const oldTags = (oldRows ?? []).map((r) => r.tag);
+    const added = nextTags.filter((t) => !oldTags.includes(t));
+    const removed = oldTags.filter((t) => !nextTags.includes(t));
+
+    try {
+      const style = post.text_style as { background?: string; font?: string } | null;
+      const { error } = await supabaseAdmin
+        .from("posts")
+        .update({
+          body: data.body,
+          song: song as unknown as Json,
+          text_style:
+            post.kind === "text"
+              ? { background: data.background ?? style?.background ?? "brand", font: data.font ?? style?.font ?? "sans" }
+              : null,
+        })
+        .eq("id", post.id);
+      if (error) throw error;
+
+      const { error: delPeople } = await supabaseAdmin.from("post_people_tags").delete().eq("post_id", post.id);
+      if (delPeople) throw delPeople;
+      if (people.length) {
+        const { error: e } = await supabaseAdmin
+          .from("post_people_tags")
+          .insert(people.map((user_id) => ({ post_id: post.id, user_id })));
+        if (e) throw e;
+      }
+      if (removed.length) {
+        const { error: e } = await supabaseAdmin.from("post_hashtags").delete().eq("post_id", post.id).in("tag", removed);
+        if (e) throw e;
+        await supabaseAdmin.rpc("unregister_hashtags", { _tags: removed });
+      }
+      if (added.length) {
+        const { error: e1 } = await supabaseAdmin.rpc("register_hashtags", { _tags: added });
+        if (e1) throw e1;
+        const { error: e2 } = await supabaseAdmin
+          .from("post_hashtags")
+          .insert(added.map((tag) => ({ post_id: post.id, tag })));
+        if (e2) throw e2;
+      }
+    } catch (err) {
+      console.error("updatePost failed", err);
+      return fail(GENERIC);
+    }
+    return { ok: true as const };
+  });
+
+/** Owner deletes a post and its files. Moderation fingerprints are kept. */
+export const deletePost = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: post, error } = await supabaseAdmin
+      .from("posts")
+      .select("id, author_id")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (error) {
+      console.error(error);
+      return { ok: false as const, error: "Couldn't delete right now. Try again." };
+    }
+    if (!post) return { ok: true as const }; // already gone
+    if (post.author_id !== userId) return { ok: false as const, error: "You can only delete your own posts." };
+
+    const [{ data: files }, { data: tags }] = await Promise.all([
+      supabaseAdmin.from("post_media").select("storage_path").eq("post_id", post.id),
+      supabaseAdmin.from("post_hashtags").select("tag").eq("post_id", post.id),
+    ]);
+    const { error: delErr } = await supabaseAdmin.from("posts").delete().eq("id", post.id);
+    if (delErr) {
+      console.error(delErr);
+      return { ok: false as const, error: "Couldn't delete right now. Try again." };
+    }
+    const paths = (files ?? []).map((f) => f.storage_path);
+    if (paths.length) await supabaseAdmin.storage.from(BUCKET).remove(paths);
+    const tagList = (tags ?? []).map((t) => t.tag);
+    if (tagList.length) await supabaseAdmin.rpc("unregister_hashtags", { _tags: tagList });
+    return { ok: true as const };
   });
